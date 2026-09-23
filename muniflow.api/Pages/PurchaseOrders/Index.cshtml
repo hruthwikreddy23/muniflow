@@ -1,0 +1,52 @@
+﻿@page
+@model muniflow.api.Pages.PurchaseOrders.IndexModel
+@{
+    ViewData["Title"] = "Purchase Orders";
+}
+
+<div class="card">
+    <h2>All Purchase Orders</h2>
+    <p style="margin: 1rem 0;">
+        <a href="/PurchaseOrders/Create" class="btn">+ New Purchase Order</a>
+    </p>
+
+    @if (Model.PurchaseOrders != null && Model.PurchaseOrders.Any())
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>PO Number</th>
+                    <th>Vendor</th>
+                    <th>Department</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Submitted</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var po in Model.PurchaseOrders)
+                {
+                    <tr>
+                        <td><strong>@po.PONumber</strong></td>
+                        <td>@po.VendorName</td>
+                        <td>@(po.Department?.Name ?? "-")</td>
+                        <td>@("$" + po.Amount.ToString("N2"))</td>
+                        <td>
+                            <span class="status-badge status-@po.Status.ToLower()">@po.Status</span>
+                        </td>
+                        <td>@po.SubmittedAt.ToString("MM/dd/yyyy HH:mm")</td>
+                        <td>
+                            <a href="/PurchaseOrders/Details?id=@po.PurchaseOrderId" class="btn btn-small">View</a>
+                            <a href="/api/PurchaseOrders/@po.PurchaseOrderId/pdf" class="btn btn-small btn-secondary" target="_blank">PDF</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p style="margin-top: 1rem; color: #888;">No purchase orders yet. <a href="/PurchaseOrders/Create">Create the first one</a>.</p>
+    }
+</div>

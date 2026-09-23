@@ -1,0 +1,109 @@
+﻿@page
+@model muniflow.api.Pages.PurchaseOrders.DetailsModel
+@{
+    ViewData["Title"] = "PO Details";
+}
+
+@if (Model.PurchaseOrder == null)
+{
+    <div class="card">
+        <h2>Purchase Order Not Found</h2>
+        <p><a href="/PurchaseOrders" class="btn btn-secondary">Back to list</a></p>
+    </div>
+}
+else
+{
+    <div class="card">
+        <h2>Purchase Order: @Model.PurchaseOrder.PONumber</h2>
+
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+        {
+            <div class="alert alert-success">@Model.SuccessMessage</div>
+        }
+
+        <table>
+            <tr>
+                <th style="width: 200px;">Status</th>
+                <td>
+                    <span class="status-badge status-@Model.PurchaseOrder.Status.ToLower()">@Model.PurchaseOrder.Status</span>
+                </td>
+            </tr>
+            <tr><th>Vendor</th><td>@Model.PurchaseOrder.VendorName</td></tr>
+            <tr><th>Description</th><td>@Model.PurchaseOrder.Description</td></tr>
+            <tr><th>Amount</th><td><strong>@("$" + Model.PurchaseOrder.Amount.ToString("N2"))</strong></td></tr>
+            <tr><th>Department</th><td>@Model.PurchaseOrder.Department?.Name</td></tr>
+            <tr><th>Submitted By</th><td>@Model.PurchaseOrder.SubmittedBy</td></tr>
+            <tr><th>Submitted At</th><td>@Model.PurchaseOrder.SubmittedAt.ToString("MMMM dd, yyyy HH:mm") UTC</td></tr>
+            @if (Model.PurchaseOrder.ProcessedAt.HasValue)
+            {
+                <tr><th>Processed At</th><td>@Model.PurchaseOrder.ProcessedAt.Value.ToString("MMMM dd, yyyy HH:mm") UTC</td></tr>
+            }
+        </table>
+
+        <div style="margin-top: 1.5rem;">
+            <a href="/api/PurchaseOrders/@Model.PurchaseOrder.PurchaseOrderId/pdf" class="btn btn-secondary" target="_blank">Download PDF</a>
+            <a href="/PurchaseOrders" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+
+    @if (Model.PurchaseOrder.Status == "Pending")
+    {
+        <div class="card">
+            <h2>Approve or Reject</h2>
+            <form method="post">
+                <input type="hidden" name="id" value="@Model.PurchaseOrder.PurchaseOrderId" />
+
+                <div class="form-group">
+                    <label>Approver Name *</label>
+                    <input type="text" name="ApproverName" required maxlength="100" placeholder="Your name" />
+                </div>
+
+                <div class="form-group">
+                    <label>Decision *</label>
+                    <select name="Decision" required>
+                        <option value="">-- Select --</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Comments</label>
+                    <textarea name="Comments" maxlength="500" placeholder="Optional comments..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-success">Submit Decision</button>
+            </form>
+        </div>
+    }
+
+    @if (Model.PurchaseOrder.Approvals != null && Model.PurchaseOrder.Approvals.Any())
+    {
+        <div class="card">
+            <h2>Approval History</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Approver</th>
+                        <th>Decision</th>
+                        <th>Date</th>
+                        <th>Comments</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var approval in Model.PurchaseOrder.Approvals.OrderBy(a => a.DecisionDate))
+                    {
+                        <tr>
+                            <td>@approval.ApproverName</td>
+                            <td>
+                                <span class="status-badge status-@approval.Decision.ToLower()">@approval.Decision</span>
+                            </td>
+                            <td>@approval.DecisionDate.ToString("MM/dd/yyyy HH:mm")</td>
+                            <td>@(approval.Comments ?? "-")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}

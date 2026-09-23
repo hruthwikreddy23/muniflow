@@ -1,0 +1,56 @@
+﻿@page
+@model muniflow.api.Pages.PurchaseOrders.CreateModel
+@{
+    ViewData["Title"] = "New Purchase Order";
+}
+
+<div class="card">
+    <h2>Create New Purchase Order</h2>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success">@Model.SuccessMessage</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-error">@Model.ErrorMessage</div>
+    }
+
+    <form method="post">
+        <div class="form-group">
+            <label>Vendor Name *</label>
+            <input type="text" name="VendorName" value="@Model.Input.VendorName" required maxlength="200" />
+        </div>
+
+        <div class="form-group">
+            <label>Description *</label>
+            <textarea name="Description" required maxlength="1000">@Model.Input.Description</textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Amount (USD) *</label>
+            <input type="number" name="Amount" value="@Model.Input.Amount" step="0.01" min="0.01" required />
+        </div>
+
+        <div class="form-group">
+            <label>Submitted By *</label>
+            <input type="text" name="SubmittedBy" value="@Model.Input.SubmittedBy" required maxlength="100" placeholder="your.email@lafayettela.gov" />
+        </div>
+
+        <div class="form-group">
+            <label>Department *</label>
+            <select name="DepartmentId" required>
+                <option value="">-- Select Department --</option>
+                @foreach (var dept in Model.Departments)
+                {
+                    <option value="@dept.DepartmentId" selected="@(Model.Input.DepartmentId == dept.DepartmentId)">
+                        @dept.Name (Budget: @("$" + dept.AnnualBudget.ToString("N0")))
+                    </option>
+                }
+            </select>
+        </div>
+
+        <button type="submit">Submit Purchase Order</button>
+        <a href="/PurchaseOrders" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

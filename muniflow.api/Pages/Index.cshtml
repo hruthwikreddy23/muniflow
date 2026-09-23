@@ -1,0 +1,57 @@
+﻿@page
+@model muniflow.api.Pages.IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="card">
+    <h2>Welcome to MuniFlow</h2>
+    <p style="margin-top: 1rem; line-height: 1.6;">
+        MuniFlow is a purchase order approval workflow system built for municipal government operations.
+        Submit purchase requests, route them through the approval process, and generate audit-ready reports.
+    </p>
+</div>
+
+<div class="card">
+    <h2>Quick Stats</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Metric</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Total Purchase Orders</td>
+                <td><strong>@Model.TotalPOs</strong></td>
+            </tr>
+            <tr>
+                <td>Pending Approvals</td>
+                <td><strong>@Model.PendingCount</strong></td>
+            </tr>
+            <tr>
+                <td>Approved</td>
+                <td><strong>@Model.ApprovedCount</strong></td>
+            </tr>
+            <tr>
+                <td>Rejected</td>
+                <td><strong>@Model.RejectedCount</strong></td>
+            </tr>
+            <tr>
+                <td>Total Approved Amount</td>
+                <td><strong>@("$" + Model.TotalApprovedAmount.ToString("N2"))</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h2>Getting Started</h2>
+    <p style="margin-bottom: 1rem;">Use the navigation above to:</p>
+    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+        <li><strong>View all Purchase Orders</strong> - Browse pending and processed POs</li>
+        <li><strong>Create a New PO</strong> - Submit a new purchase request</li>
+        <li><strong>API Docs</strong> - Explore the underlying REST API via Swagger</li>
+    </ul>
+</div>

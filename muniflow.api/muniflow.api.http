@@ -1,0 +1,6 @@
+@muniflow.api_HostAddress = http://localhost:5107
+
+GET {{muniflow.api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
